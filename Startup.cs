@@ -53,6 +53,7 @@
             serviceCollection.Configure<GithubConfig>(Configuration.GetSection("Github"));
             serviceCollection.Configure<GistEmbedConfig>(Configuration.GetSection("GistEmbed"));
             serviceCollection.Configure<DevToConfig>(Configuration.GetSection("DevTo"));
+            serviceCollection.Configure<MediumConfig>(Configuration.GetSection("Medium"));
 
             var builder = new ContainerBuilder();
             builder.Populate(serviceCollection);

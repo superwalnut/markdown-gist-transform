@@ -10,59 +10,72 @@ using MarkdownToGist.Interfaces;
 using MarkdownToGist.Models;
 using Microsoft.Extensions.Options;
 using Serilog;
-
 namespace MarkdownToGist.Services
 {
-    public class DevToService : IDevToService
+    public class MediumService : IMediumService
     {
-        private readonly IOptions<DevToConfig> _devtoConfig;
+        private readonly IOptions<MediumConfig> _mediumConfig;
         private readonly ILogger _logger;
         private static Regex _metaRegex = new Regex(@"(---[a-z\W]*\n[\s\S]*?\n---)");
 
-        public DevToService(IOptions<DevToConfig> devtoConfig, ILogger logger)
+        public MediumService(IOptions<MediumConfig> mediumConfig, ILogger logger)
         {
-            _devtoConfig = devtoConfig;
+            _mediumConfig = mediumConfig;
             _logger = logger;
         }
 
-        public async Task<DevToArticle> Publish(string content, string apiKey, bool isPublished = false)
+        public async Task<MediumArticle> Publish(string content, string authToken, bool isPublished = false)
         {
             try
             {
                 var (title, tags, body) = GetTitleTagsBody(content);
-                var request = new DevToArticleRequest
+                var request = new MediumArticleRequest
                 {
-                    Article = new Article
-                    {
-                        Published = isPublished,
-                        Title = title,
-                        Tags = tags.ToList(),
-                        BodyMarkdown = body
-                    }
+                    Title = title,
+                    Tags = tags.ToList(),
+                    PublishStatus = isPublished? "public" : "draft",
+                    ContentFormat = "markdown",
+                    Content = body
                 };
 
-                var article = await _devtoConfig.Value.ArticleApi
-                    .WithHeader("api_key", apiKey)
+                var user = await GetUser(authToken);
+
+                var postUrl = string.Format(_mediumConfig.Value.ArticleApi, user.Data.Id);
+
+                var article = await postUrl
+                    .WithOAuthBearerToken(authToken)
                     .WithHeader("Content-Type", "application/json")
                     .WithHeader("User-Agent", "request")
                     .PostJsonAsync(request)
-                    .ReceiveJson<DevToArticle>();
+                    .ReceiveJson<MediumArticle>();
 
-                _logger.Information("publishing a article to dev.to {name} {link}", request.Article.Title, article.Url);
+                _logger.Information("publishing a article to Medium {name} {link}", request.Title, article.Data.Url);
 
                 return article;
             }
             catch (Exception ex)
             {
-                _logger.Error("publishing dev.to error", ex);
+                _logger.Error("publishing Medium error", ex);
             }
 
             return null;
         }
 
-        private (string,string[],string) GetTitleTagsBody(string content)
+        private async Task<MediumUser> GetUser(string authToken)
         {
-            if(_metaRegex.IsMatch(content))
+            var user = await _mediumConfig.Value.ProfileApi
+                    .WithOAuthBearerToken(authToken)
+                    .WithHeader("Content-Type", "application/json")
+                    .WithHeader("User-Agent", "request")
+                    .GetAsync()
+                    .ReceiveJson<MediumUser>();
+
+            return user;
+        }
+
+        private (string, string[], string) GetTitleTagsBody(string content)
+        {
+            if (_metaRegex.IsMatch(content))
             {
                 var meta = _metaRegex.Match(content);
 
@@ -81,7 +94,7 @@ namespace MarkdownToGist.Services
 
                     if (titleRegex.IsMatch(line))
                     {
-                        title = titleRegex.Match(line).Replace(line, "").Replace("\"","");
+                        title = titleRegex.Match(line).Replace(line, "").Replace("\"", "");
                     }
 
                     if (tagsRegex.IsMatch(line))

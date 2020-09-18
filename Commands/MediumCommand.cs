@@ -5,53 +5,53 @@ using Serilog;
 
 namespace MarkdownToGist.Commands
 {
-    [AutofacRegistrationOrder(2)]
-    public class DevToCommand : BaseConsoleCommand
+    [AutofacRegistrationOrder(3)]
+    public class MediumCommand : BaseConsoleCommand
     {
         private readonly ILogger _logger;
-        private readonly IDevToService _devToService;
+        private readonly IMediumService _mediumService;
         private string _filePath;
-        private string _apikey;
+        private string _token;
         private string _publishStatus;
 
-        public DevToCommand(ILogger logger, IDevToService devToService)
+        public MediumCommand(ILogger logger, IMediumService mediumService)
         {
             _logger = logger;
-            _devToService = devToService;
+            _mediumService = mediumService;
 
-            this.IsCommand("devto", "publish artile to dev.to");
+            this.IsCommand("medium", "publish artile to medium");
             this.HasOption("f|file=", "markdown file path", v => _filePath = v);
-            this.HasOption("k|apiKey=", "dev.to api key", v => _apikey = v);
+            this.HasOption("t|token=", "medium auth token", v => _token = v);
             this.HasOption("s|status=", "publish status public/draft", v => _publishStatus = v);
         }
 
         public override int RunCommand()
         {
-            if (string.IsNullOrEmpty(_apikey))
+            if (string.IsNullOrEmpty(_token))
             {
-                PrintErrorLine("You must provide a dev.to api key");
+                PrintErrorLine("You must provide a medium outh token");
                 return -1;
             }
 
             if (string.IsNullOrEmpty(_filePath))
                 _filePath = Environment.CurrentDirectory;
 
-            var files = FindMdFiles(_filePath, "*-[Dev.to].md");
+            var files = FindMdFiles(_filePath, "*-[Medium].md");
 
             if (files.Count <= 0)
             {
-                PrintErrorLine("No parsed dev.to md files are found");
+                PrintErrorLine("No parsed medium md files are found");
             }
 
             var isPublish = !string.IsNullOrEmpty(_publishStatus) && _publishStatus.Equals("publish", StringComparison.CurrentCultureIgnoreCase);
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 var content = ReadMdFile(file);
 
-                var article = _devToService.Publish(content, _apikey, isPublish).Result;
+                var article = _mediumService.Publish(content, _token, isPublish).Result;
 
-                PrintSuccessLine($"published to dev.to {article.Url}");
+                PrintSuccessLine($"published to medium {article.Data.Url}");
             }
 
             return 0;

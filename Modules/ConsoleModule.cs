@@ -24,6 +24,7 @@ namespace MarkdownToGist.Modules
             builder.RegisterType<GistService>().As<IGistService>();
             builder.RegisterType<MarkdownService>().As<IMarkdownService>();
             builder.RegisterType<DevToService>().As<IDevToService>();
+            builder.RegisterType<MediumService>().As<IMediumService>();
 
             var types = typeof(BaseConsoleCommand).Assembly.GetTypes().Where(x => x.IsAssignableTo<IConsoleCommand>() & !x.IsInterface & !x.IsAbstract);
 
