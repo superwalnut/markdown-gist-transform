@@ -10,6 +10,9 @@ namespace MarkdownToGist.Modules
     using MarkdownToGist.Interfaces;
     using MarkdownToGist.Attributes;
     using MarkdownToGist.Services;
+    using Flurl.Http;
+    using Newtonsoft.Json;
+    using Flurl.Http.Configuration;
 
     public class ConsoleModule : Module
     {
@@ -20,6 +23,7 @@ namespace MarkdownToGist.Modules
 
             builder.RegisterType<GistService>().As<IGistService>();
             builder.RegisterType<MarkdownService>().As<IMarkdownService>();
+            builder.RegisterType<DevToService>().As<IDevToService>();
 
             var types = typeof(BaseConsoleCommand).Assembly.GetTypes().Where(x => x.IsAssignableTo<IConsoleCommand>() & !x.IsInterface & !x.IsAbstract);
 
@@ -31,6 +35,15 @@ namespace MarkdownToGist.Modules
 
             builder.RegisterType<CommandList>().As<ICommandList>();
 
+            FlurlHttp.Configure(settings => {
+                var jsonSettings = new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                settings.JsonSerializer = new NewtonsoftJsonSerializer(jsonSettings);
+            });
         }
     }
 }

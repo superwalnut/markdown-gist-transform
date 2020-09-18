@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using ManyConsole;
 using MarkdownToGist.Interfaces;
 
@@ -75,6 +78,33 @@ namespace MarkdownToGist.Commands
             Console.ForegroundColor = code != 0 ? ConsoleColor.Red : ConsoleColor.Green;
             Console.WriteLine($"Job completed with code {code} ...");
             Console.ResetColor();
+        }
+
+        protected List<string> FindMdFiles(string path, string pattern = "*.md")
+        {
+            var list = new List<string>();
+            // if it a md file, return the path
+            if (File.Exists(path) && Path.GetExtension(path).Equals(".md"))
+            {
+                return new List<string> { path };
+            }
+
+            // if it is a folder, we need to discover all md files inside
+            if (Directory.Exists(path))
+            {
+                var mdFiles = Directory.GetFiles(path, pattern, SearchOption.AllDirectories);
+                return mdFiles.ToList();
+            }
+
+            throw new FileNotFoundException(".md files are not found");
+        }
+
+        protected string ReadMdFile(string path)
+        {
+            using (var reader = new StreamReader(path))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
     }

@@ -51,7 +51,8 @@
             serviceCollection.AddAutofac();
             serviceCollection.AddOptions();
             serviceCollection.Configure<GithubConfig>(Configuration.GetSection("Github"));
-            serviceCollection.Configure<GistEmbedConfig>(Configuration.GetSection("GistEmbedConfig"));
+            serviceCollection.Configure<GistEmbedConfig>(Configuration.GetSection("GistEmbed"));
+            serviceCollection.Configure<DevToConfig>(Configuration.GetSection("DevTo"));
 
             var builder = new ContainerBuilder();
             builder.Populate(serviceCollection);

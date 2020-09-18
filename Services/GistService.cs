@@ -23,17 +23,7 @@ namespace MarkdownToGist.Services
         public GistService(IOptions<GithubConfig> githubConfig, ILogger logger)
         {
             _githubConfig = githubConfig;
-            _logger = logger;
-
-            FlurlHttp.Configure(settings => {
-                var jsonSettings = new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                };
-                settings.JsonSerializer = new NewtonsoftJsonSerializer(jsonSettings);
-            });
+            _logger = logger;            
         }
 
         public async Task<Gist> Create(string file, string content, string authToken)
@@ -61,7 +51,7 @@ namespace MarkdownToGist.Services
             }
             catch(Exception ex)
             {
-                _logger.Error("Creating gist error",ex);
+                _logger.Error("creating gist error",ex);
             }
 
             return null;

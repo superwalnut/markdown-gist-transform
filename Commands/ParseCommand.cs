@@ -38,7 +38,7 @@ namespace MarkdownToGist.Commands
             {
                 PrintErrorLine("You must provide a github auth token");
                 return -1;
-            }                
+            }
 
             if (string.IsNullOrEmpty(_filePath))
                 _filePath = Environment.CurrentDirectory;
@@ -77,32 +77,6 @@ namespace MarkdownToGist.Commands
             return 0;
         }
 
-        private List<string> FindMdFiles(string path)
-        {
-            var list = new List<string>();
-            // if it a md file, return the path
-            if (File.Exists(path) && Path.GetExtension(path).Equals(".md"))
-            {
-                return new List<string> { path };
-            }
-
-            // if it is a folder, we need to discover all md files inside
-            if (Directory.Exists(path))
-            {
-                var mdFiles = Directory.GetFiles(path, "*.md", SearchOption.AllDirectories);
-                return mdFiles.ToList();
-            }
-
-            throw new FileNotFoundException(".md files are not found");
-        }
-
-        private string ReadMdFile(string path)
-        {
-            using(var reader = new StreamReader(path))
-            {
-                return reader.ReadToEnd();
-            }
-        }
 
         private void SaveMdFile(string path, string parsedContent)
         {
