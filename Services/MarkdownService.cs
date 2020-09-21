@@ -23,7 +23,8 @@ namespace MarkdownToGist.Services
             _gistConfig = gistConfig;
         }
 
-        public async Task<Dictionary<string,string>> ParseEmbedGist(string fileName, string markdown, string authToken)
+        // return brand as key, parsed-markdown content as value in a dictionary
+        public async Task<Dictionary<string,string>> ParseCodeToGist(string fileName, string markdown, string authToken)
         {
             var result = markdown;
 

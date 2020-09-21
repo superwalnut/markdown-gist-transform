@@ -1,6 +1,7 @@
 ﻿using System;
 using MarkdownToGist.Attributes;
 using MarkdownToGist.Interfaces;
+using MarkdownToGist.Models;
 using Serilog;
 
 namespace MarkdownToGist.Commands
@@ -36,7 +37,7 @@ namespace MarkdownToGist.Commands
             if (string.IsNullOrEmpty(_filePath))
                 _filePath = Environment.CurrentDirectory;
 
-            var files = FindMdFiles(_filePath, "*-[Dev.to].md");
+            var files = FindMdFiles(_filePath, $"*-[{Brands.DevTo}].md");
 
             if (files.Count <= 0)
             {
@@ -47,9 +48,20 @@ namespace MarkdownToGist.Commands
 
             foreach(var file in files)
             {
-                var content = ReadMdFile(file);
+                var published = FindPublishedFile(file, Brands.DevTo);
+
+                if(published)
+                {
+                    PrintErrorLine($"File {file} is already published to dev.to");
+                    continue;
+                }
+
+                var content = ReadFile(file);
 
                 var article = _devToService.Publish(content, _apikey, isPublish).Result;
+
+                // save published file
+                SaveMdFile(GetPublishedFileName(file, Brands.DevTo), content);
 
                 PrintSuccessLine($"published to dev.to {article.Url}");
             }

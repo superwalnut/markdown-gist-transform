@@ -41,7 +41,7 @@ namespace MarkdownToGist.Commands
             }
 
             if (string.IsNullOrEmpty(_filePath))
-                _filePath = Environment.CurrentDirectory;
+                _filePath = Environment.CurrentDirectory;             
 
             var files = FindMdFiles(_filePath);
 
@@ -61,8 +61,8 @@ namespace MarkdownToGist.Commands
                     continue;
                 }
                     
-                var md = ReadMdFile(file);
-                var sources = _markdownService.ParseEmbedGist(fileName, md, _token).Result;
+                var md = ReadFile(file);
+                var sources = _markdownService.ParseCodeToGist(fileName, md, _token).Result;
 
                 if(sources != null)
                 {
@@ -75,16 +75,6 @@ namespace MarkdownToGist.Commands
             }
 
             return 0;
-        }
-
-
-        private void SaveMdFile(string path, string parsedContent)
-        {
-            using(var writer = new StreamWriter(path))
-            {
-                writer.Write(parsedContent);
-                writer.Flush();
-            }
         }
 
         private bool HasProcessed(FileInfo fi)

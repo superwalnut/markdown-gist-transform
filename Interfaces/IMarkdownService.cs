@@ -6,6 +6,6 @@ namespace MarkdownToGist.Interfaces
 {
     public interface IMarkdownService
     {
-        Task<Dictionary<string, string>> ParseEmbedGist(string fileName, string markdown, string authToken);
+        Task<Dictionary<string, string>> ParseCodeToGist(string fileName, string markdown, string authToken);
     }
 }

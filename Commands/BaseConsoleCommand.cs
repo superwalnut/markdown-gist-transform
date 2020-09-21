@@ -99,7 +99,7 @@ namespace MarkdownToGist.Commands
             throw new FileNotFoundException(".md files are not found");
         }
 
-        protected string ReadMdFile(string path)
+        protected string ReadFile(string path)
         {
             using (var reader = new StreamReader(path))
             {
@@ -107,5 +107,26 @@ namespace MarkdownToGist.Commands
             }
         }
 
+        protected string GetPublishedFileName(string path, string brand)
+        {
+            FileInfo fi = new FileInfo(path);
+            var fileName = Path.GetFileNameWithoutExtension(fi.Name);
+            var publishedFile = Path.Combine(fi.Directory.FullName, $"{fileName}-[{brand}].published.md");
+            return publishedFile;
+        }
+
+        protected bool FindPublishedFile(string path, string brand)
+        {            
+            return File.Exists(GetPublishedFileName(path, brand));
+        }
+
+        protected void SaveMdFile(string path, string parsedContent)
+        {
+            using (var writer = new StreamWriter(path))
+            {
+                writer.Write(parsedContent);
+                writer.Flush();
+            }
+        }
     }
 }
