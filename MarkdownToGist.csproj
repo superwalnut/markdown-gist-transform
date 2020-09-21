@@ -20,7 +20,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>content</ContentTargetFolders>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
-    <PackageLicenseFile>template/LICENSE.txt</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/superwalnut/markdown-gist-transform</PackageProjectUrl>
 
   </PropertyGroup>
@@ -51,7 +51,7 @@
     <None Include="md-gist.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-     <None Include="LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
+     <None Include="LICENSE.txt" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
