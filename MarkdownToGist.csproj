@@ -51,7 +51,7 @@
     <None Include="md-gist.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-     <None Include="LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
+     <None Include="LICENSE.txt" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
