@@ -1,8 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>md-gist</ToolCommandName>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
     <OutputType>Exe</OutputType>
+    <PackageType>DotnetTool</PackageType>
+    <PackageId>MD-Gist</PackageId>
+    <Title>MD-Gist</Title>
+    <Authors>Superwalnut</Authors>
+    <PackageIcon>md-gist.png</PackageIcon>
+    <Description>
+    This is a dotnet tool to transform your markdown code into gist that you can publish to Medium, Dev.to, Hugo blog platforms.
+    </Description>
+    <PackageTags>markdown, gist, medium, dev.to, hugo blog</PackageTags>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/superwalnut/markdown-gist-transform</PackageProjectUrl>
+
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +45,13 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="md-gist.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+     <None Include="LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
   </ItemGroup>
 
   <ItemGroup>
