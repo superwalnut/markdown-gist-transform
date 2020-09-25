@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Flurl.Http;
@@ -34,7 +35,7 @@ namespace MarkdownToGist.Services
                 {
                     Description = $"code block for {file}",
                     Public = true,
-                    Files = new Dictionary<string, File> { { file, new File { Content = RemoveBackticks(content) } } }
+                    Files = new Dictionary<string, Models.File> { { file, new Models.File { Content = RemoveBackticks(content) } } }
                 };
 
                 var gist = await _githubConfig.Value.GistApi
@@ -59,13 +60,19 @@ namespace MarkdownToGist.Services
 
         private string RemoveBackticks(string content)
         {
-            var result = content;
-            var matches = _regex.Matches(content);
-            foreach(Match match in matches)
+            using(StringReader sr = new StringReader(content))
             {
-                result = result.Replace(match.Value, "");
+                while(sr.Peek() != -1)
+                {
+                    var line = sr.ReadLine();
+                    if (line.StartsWith("```"))
+                    {
+                        content = content.Replace(line, "");
+                    }
+                }
             }
-            return result;
+            
+            return content;
         }
     }
 }
