@@ -14,7 +14,6 @@
 
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Support](#support)
 - [License](#license)
 
