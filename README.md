@@ -14,6 +14,7 @@
 
 - [Features](#features)
 - [Installation](#installation)
+- [Usage](#usage)
 - [Support](#support)
 - [License](#license)
 
@@ -102,6 +103,41 @@ $ md-gist medium -f=<Files Path> -t=<Medium Access Token> -s=<Status draft/publi
 
 ``` shell
 $ dotnet tool install --global MD-Gist
+```
+
+---
+
+### Usage
+
+I am using github as my blog source and save my posts in markdown format. Here is an example, [tech blog](https://github.com/superwalnut/tech-blog)
+
+I created a sample post called "markdown.md".
+
+Then I created github action that will automatically detect any .md files and convert the code blocks to gist embeded code and pushed these new files to the repository as well.
+
+```
+    - name: Parse markdown
+      working-directory: ./Blogs
+      run: | 
+        dotnet tool install --global MD-Gist
+        md-gist parse -t=${{secrets.GIST_TOKEN}}        
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "Add changes" -a
+    - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+            github_token: ${{ secrets.GIST_TOKEN }}
+```
+
+It will create these files that you can publish directly in these blogging platforms
+
+```
+markdown-[Dev.to].md
+markdown-[Hugo].md
+markdown-[Jekyll].md
+markdown-[Medium].md
 ```
 
 ---
